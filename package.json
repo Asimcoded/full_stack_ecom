@@ -1,0 +1,26 @@
+{
+  "name": "full-stack-ecom",
+  "version": "1.0.0",
+  "description": "ecom site",
+  "keywords": [
+    "ECOM",
+    "project"
+  ],
+  "homepage": "https://github.com/Asimcoded/full_stack_ecom#readme",
+  "bugs": {
+    "url": "https://github.com/Asimcoded/full_stack_ecom/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asimcoded/full_stack_ecom.git"
+  },
+  "license": "ISC",
+  "author": "Asim das",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "backend" : "cd ./backend && nodemon server.js",
+    "frontend" : "cd ./frontend && npm run dev"
+  }
+}

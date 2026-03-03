@@ -2,7 +2,7 @@ import e from "express";
 import { loginController, logout, refresh, resetPassword, setNewPassword, signupController, verifyPasswordResetToken } from "../controllers/userauth.controller.js";
 const authRouter = e.Router()
 
-authRouter.post('/signup',signupController)
+authRouter.post('/register',signupController)
 authRouter.post('/login',loginController)
 authRouter.post('/refresh',refresh)
 authRouter.post('/logout',logout)

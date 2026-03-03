@@ -1,0 +1,42 @@
+// router.js
+import Home from '@/pages/Home';
+import Login from '@/pages/Login';
+import NewPassword from '@/pages/NewPassword';
+import NotFound from '@/pages/NotFound';
+import Register from '@/pages/Register';
+import ResetPassword from '@/pages/ResetPassword';
+import {
+  createBrowserRouter,
+} from 'react-router';
+import { tokenProtectedLoader } from './loaderRoute/tokenProtectedLoader';
+import Failed from '@/pages/Failed';
+
+export const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <Login />,
+  },{
+    path: '/register',
+    element: <Register />,
+  },{
+    path: '/reset-password',
+    element: <ResetPassword />,
+  },{
+    path: '/reset-password/:token',
+    element: <NewPassword />,
+    loader : tokenProtectedLoader
+  },
+  {
+    path: "/",
+    element: <Home />,
+    // loader: protectedLoader, // 🔥 PROTECTED
+  },
+  {
+    path : '/failed',
+    element : <Failed />
+  },
+  {
+    path : '*',
+    element : <NotFound />
+  }
+]);

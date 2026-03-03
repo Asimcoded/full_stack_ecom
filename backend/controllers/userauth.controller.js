@@ -127,7 +127,6 @@ export const resetPassword = async (req, res) => {
       });
 
     const resetToken = await generatePasswordResetToken(user);
-    console.log("Runi");
 
     const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
     const option = {
