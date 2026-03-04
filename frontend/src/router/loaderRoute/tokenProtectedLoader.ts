@@ -9,7 +9,6 @@ export async function tokenProtectedLoader({ params }: any) {
   }
 
   try {
-    // const res = await api.post("/auth/verify-token", { token })
     const res = await verifyTokenAPI(token)
     // return data to the page
     return {

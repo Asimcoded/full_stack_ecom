@@ -17,7 +17,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { useAuth } from '@/contexts/authContext';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -27,6 +28,7 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>;
 
 export default function Login() {
+  const navigate = useNavigate()
   // @ts-ignore
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -43,8 +45,10 @@ export default function Login() {
       try {
         setLoading(true);
         await login(value);
+        toast.success("Login successfully")
+        navigate('/')
       } catch (err: any) {
-        alert(err.response?.data?.message || 'Login failed');
+        toast.error(err.response?.data?.message || 'Login failed')
       } finally {
         setLoading(false);
       }

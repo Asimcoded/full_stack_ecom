@@ -15,3 +15,10 @@ export const resetPasswordAPI = (data: { userId: string; password: string }) =>
 
 export const requestPasswordResetAPI = (email: string) =>
   api.post("/auth/resetpassword", { email })
+
+export const refreshToken = async () => {
+  const response = await api.post("/auth/refresh", {
+    refreshToken: localStorage.getItem("refreshToken"),
+  });
+  return response.data;
+};

@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { resetPasswordAPI } from '@/apis/auth.api';
+import { toast } from 'sonner';
 
-// ✅ Schema
 const passwordSchema = z
   .object({
     password: z.string().min(6, 'Minimum 6 characters'),
@@ -50,7 +50,7 @@ export default function NewPassword() {
           userId,
           password: value.password,
         });
-
+        toast.success("New password is created")
         navigate('/login');
       } catch (err: any) {
         alert(err.response?.data?.message || 'Reset failed');
