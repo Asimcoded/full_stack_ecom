@@ -16,7 +16,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link to="/" className="text-xl font-bold tracking-tight">
-          E fi
+          Logo
         </Link>
 
         {/* Right Side */}
@@ -32,10 +32,10 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login">
+              <Link to="/auth/login">
                 <Button variant="outline">Login</Button>
               </Link>
-              <Link to="/register">
+              <Link to="/auth/register">
                 <Button>Register</Button>
               </Link>
             </>

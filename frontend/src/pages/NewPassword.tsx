@@ -51,7 +51,7 @@ export default function NewPassword() {
           password: value.password,
         });
         toast.success("New password is created")
-        navigate('/login');
+        navigate('/auth/login');
       } catch (err: any) {
         alert(err.response?.data?.message || 'Reset failed');
       } finally {

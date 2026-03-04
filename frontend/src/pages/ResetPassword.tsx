@@ -103,7 +103,7 @@ export default function ResetPassword() {
 
         <CardFooter className="flex justify-center text-sm text-muted-foreground">
           Remember your password?{' '}
-          <Link to="/login" className="text-accent-foreground">
+          <Link to="/auth/login" className="text-accent-foreground">
             Login
           </Link>
         </CardFooter>

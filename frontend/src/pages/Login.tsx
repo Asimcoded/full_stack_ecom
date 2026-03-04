@@ -100,7 +100,7 @@ export default function Login() {
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
                     <Link
-                      to={'/reset-password'}
+                      to={'/auth/reset-password'}
                       className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                     >
                       Forgot your password?
@@ -129,7 +129,7 @@ export default function Login() {
 
         <CardFooter className="flex justify-center text-sm text-muted-foreground">
           Don’t have an account?{' '}
-          <Link to={'/register'} className="text-accent-foreground">
+          <Link to={'/auth/register'} className="text-accent-foreground">
             Register
           </Link>
         </CardFooter>

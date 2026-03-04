@@ -28,7 +28,7 @@ export default function Failed() {
         <CardContent className="space-y-4">
           <Button
             className="w-full"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/auth/login')}
           >
             Go to Login
           </Button>

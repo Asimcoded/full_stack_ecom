@@ -169,7 +169,7 @@ export default function Register() {
 
         <CardFooter className="flex gap-0.5 justify-center text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link to={'/login'} className="text-accent-foreground">
+          <Link to={'/auth/login'} className="text-accent-foreground">
             Login
           </Link>
         </CardFooter>
