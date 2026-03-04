@@ -7,6 +7,7 @@ import type {
   RegisterInterface,
   User,
 } from '@/interfaces/auth.interface';
+import { toast } from 'sonner';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 interface AuthProviderProps {
@@ -15,14 +16,13 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [ isAuthenticated , setIsAuthenticated] = useState <boolean> (false)
   // Attach token automatically
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // loadUser();
+      loadUser();
     } else {
       setLoading(false);
     }
@@ -32,7 +32,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const loadUser = async () => {
     try {
       const res = await getProfile();
-      setUser(res.data);
+      setUser(res.data.data);
+      setIsAuthenticated(true)
+      localStorage.setItem("userData",JSON.stringify(res.data.data))
     } catch (error) {
       logout();
     } finally {
@@ -44,31 +46,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (data: LoginInterface) => {
     const res = await loginUser(data);
     console.log(res);
-    
-    const { accessToken,refreshToken } = res.data.tokens;
-
+    const { accessToken, refreshToken } = res.data.tokens;
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
-
     api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-
-
-
-    // await loadUser();
+    await loadUser();
   };
 
   // Register
   const register = async (data: RegisterInterface) => {
     const res = await registerUser(data);
-    return res.data;
+    if (res.status == 201) {
+      toast.success("Register successfully")
+      return res.data;
+    }
   };
 
   // Logout
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userData')
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
+    setIsAuthenticated(false)
+    toast.success("Logout successfully")
   };
 
   const value: AuthContextType = {
@@ -77,7 +79,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     login,
     register,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

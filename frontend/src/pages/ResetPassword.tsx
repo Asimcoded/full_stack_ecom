@@ -18,8 +18,8 @@ import { Label } from '@/components/ui/label';
 
 import { requestPasswordResetAPI } from '@/apis/auth.api';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 
-// ✅ Validation Schema
 const emailSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
@@ -42,8 +42,9 @@ export default function ResetPassword() {
         setLoading(true);
         await requestPasswordResetAPI(value.email);
         setSuccess(true);
+        toast.success("Email send successfully")
       } catch (err: any) {
-        alert(err.response?.data?.message || 'Something went wrong');
+        toast.error(err.response?.data?.message || 'Something went wrong')
       } finally {
         setLoading(false);
       }

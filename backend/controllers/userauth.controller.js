@@ -1,20 +1,21 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import User from "../models/userauth.model.js";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import User from '../models/userauth.model.js';
 import {
   generateAccessToken,
   generatePasswordResetToken,
   generateRefreshToken,
   revokeRefreshToken,
   rotateRefreshToken,
-} from "../services/token.service.js";
-import { Transporter } from "../configs/mail.config.js";
-
+} from '../services/token.service.js';
+import { Transporter } from '../configs/mail.config.js';
+import mongoose from 'mongoose';
+const { ObjectId } = mongoose.Types;
 export const signupController = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     res.status(400).json({
-      message: "Name, Email, and Password is needed",
+      message: 'Name, Email, and Password is needed',
     });
   }
   try {
@@ -26,25 +27,25 @@ export const signupController = async (req, res) => {
     });
     const result = await user.save();
     res.status(201).json({
-      message: "Signup Successfully",
+      message: 'Signup Successfully',
     });
   } catch (err) {
     if (err.code == 11000) {
-      if (Object.keys(err.keyPattern)[0] == "email") {
+      if (Object.keys(err.keyPattern)[0] == 'email') {
         res.status(409).json({
-          message: "Email is already used!",
+          message: 'Email is already used!',
         });
       }
-      if (Object.keys(err.keyPattern)[0] == "name") {
+      if (Object.keys(err.keyPattern)[0] == 'name') {
         res.status(409).json({
-          message: "Name is already used!",
+          message: 'Name is already used!',
         });
       }
     }
     console.error(err);
 
     res.status(400).json({
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
     });
   }
 };
@@ -53,7 +54,7 @@ export const loginController = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).json({
-      message: "Email, and Password is needed",
+      message: 'Email, and Password is needed',
     });
     return;
   }
@@ -61,17 +62,17 @@ export const loginController = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user)
       return res.status(404).json({
-        message: "User not exist",
+        message: 'User not exist',
       });
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
       return res.status(401).json({
-        message: "Invaid password",
+        message: 'Invaid password',
       });
     const accessToken = generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
     res.status(201).json({
-      message: "Login Successfully",
+      message: 'Login Successfully',
       tokens: {
         accessToken,
         refreshToken,
@@ -80,25 +81,23 @@ export const loginController = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(400).json({
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
     });
   }
 };
 
 export const refresh = async (req, res) => {
-  if (!req.body)
-    return res.status(401).json({ message: "Refresh token missing" });
+  if (!req.body) return res.status(401).json({ message: 'Refresh token missing' });
 
   const { refreshToken } = req.body;
 
-  if (!refreshToken)
-    return res.status(401).json({ message: "Refresh token missing" });
+  if (!refreshToken) return res.status(401).json({ message: 'Refresh token missing' });
 
   try {
     const tokens = await rotateRefreshToken(refreshToken);
     res.json(tokens);
   } catch (err) {
-    res.status(403).json({ message: "Invalid refresh token" });
+    res.status(403).json({ message: 'Invalid refresh token' });
   }
 };
 
@@ -107,32 +106,31 @@ export const logout = async (req, res) => {
 
   await revokeRefreshToken(refreshToken);
 
-  res.json({ message: "Logged out successfully" });
+  res.json({ message: 'Logged out successfully' });
 };
 
 // reset password
 
 export const resetPassword = async (req, res) => {
-  if (!req.body)
-    return res.status(401).json({ message: "Something went wrong!" });
+  if (!req.body) return res.status(401).json({ message: 'Something went wrong!' });
 
   const { email } = req.body;
 
-  if (!email) return res.status(401).json({ message: "Email missing" });
+  if (!email) return res.status(401).json({ message: 'Email missing' });
   try {
     const user = await User.findOne({ email });
     if (!user)
       return res.status(404).json({
-        message: "Invaild Email!",
+        message: 'Fail to send mail',
       });
 
     const resetToken = await generatePasswordResetToken(user);
 
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     const option = {
       from: `"Support Team" <${process.env.EMAIL}>`,
       to: email,
-      subject: "Password Reset Request",
+      subject: 'Password Reset Request',
       text: `You requested a password reset. Please click the link below to reset your password. This link is valid for 10 minutes: ${resetUrl}`,
       html: `
     <div style="font-family: sans-serif; max-width: 600px; margin: auto;">
@@ -150,14 +148,14 @@ export const resetPassword = async (req, res) => {
   `,
     };
     await Transporter.sendMail(option, (err, info) => {
-      if (err) return res.status(408).json({ message: "Fail to send email!" });
+      if (err) return res.status(408).json({ message: 'Fail to send email!' });
       console.log(info);
-      res.status(201).json({ message: "Mail send" });
+      res.status(201).json({ message: 'Mail send' });
     });
   } catch (err) {
     console.log(err);
 
-    res.status(403).json({ message: "Invalid refresh token" });
+    res.status(403).json({ message: 'Invalid refresh token' });
   }
 };
 
@@ -166,21 +164,21 @@ export const verifyPasswordResetToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
 
-    if (decoded.type !== "password_reset") {
-      throw new Error("Invalid token type");
+    if (decoded.type !== 'password_reset') {
+      throw new Error('Invalid token type');
     }
     const user = await User.findById(decoded.sub);
     if (!user) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
     res.status(201).json({
-      message: "Token verified",
+      message: 'Token verified',
       userId: user._id,
     });
   } catch (err) {
     console.log(err);
     res.status(408).json({
-      message: "Token expired",
+      message: 'Token expired',
     });
   }
 };
@@ -191,7 +189,7 @@ export const setNewPassword = async (req, res) => {
 
   if (!password) {
     res.status(400).json({
-      message: "Password is needed",
+      message: 'Password is needed',
     });
   }
   try {
@@ -202,15 +200,48 @@ export const setNewPassword = async (req, res) => {
       { new: true },
     );
     if (!result) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.status(201).json({
-      message: "Password updated successfully",
+      message: 'Password updated successfully',
     });
   } catch (err) {
     console.error(err);
     res.status(400).json({
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  const { user } = req;
+  try {
+    const userData = await User.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(user.id),
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          email: 1,
+          role: 1,
+          kycStatus: 1,
+        },
+      },
+    ]);
+    if (userData.length <= 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(201).json({
+      message: 'Profile get successfully',
+      data: userData,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({
+      message: 'Internal Server Error',
     });
   }
 };

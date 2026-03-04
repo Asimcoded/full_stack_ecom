@@ -9,23 +9,22 @@ export default function Navbar() {
   // remove @ts-ignore later by typing your context properly
   // @ts-ignore
   const { user, logout, isAuthenticated } = useAuth()
-
+  
   return (
     <nav className="w-full border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        
+
         {/* Logo */}
         <Link to="/" className="text-xl font-bold tracking-tight">
-          MyApp
+          E fi
         </Link>
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          <ModeToggle />
           {isAuthenticated ? (
             <>
               <span className="text-sm text-muted-foreground">
-                {user?.name}
+                {user  && user[0]?.name}
               </span>
               <Button variant="outline" onClick={logout}>
                 Logout
@@ -41,6 +40,7 @@ export default function Navbar() {
               </Link>
             </>
           )}
+          <ModeToggle />
         </div>
       </div>
     </nav>
